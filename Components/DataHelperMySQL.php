@@ -35,7 +35,7 @@ class DataHelperMySQL {
 		try {
 			if(!$query = $this->db->query($sql)){
 				print "Error in query";
-				die();
+				die(var_export($this->db->errorinfo(), TRUE));
 			}
 		} catch (PDOException $e) {
 			print "Error!: " . $e->getMessage();

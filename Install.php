@@ -7,14 +7,20 @@
  * To change this template use File | Settings | File Templates.
  */
 
-include_once 'DataHelperMySQL.php';
+include_once '/Components/DataHelperMySQL.php';
+include_once '/Config/config.php';
 
 class Install {
 
-	public static function SetUpDatabase($database)
-	{
-		$dh = new DataHelperMySql($database,'root','');
+	private $dh;
 
+	public function __construct($dh)
+	{
+		$this->dh=$dh;
+	}
+
+	public function SetUpDatabase()
+	{
 		$sql = "CREATE TABLE `iolmasters` (
 				`id` VARCHAR(50) NOT NULL,
 				`filepath` VARCHAR(255) NOT NULL,
@@ -24,15 +30,13 @@ class Install {
 				COLLATE='utf16_bin'
 				ENGINE=InnoDB;";
 
-		$dh->ExecNoneQuery($sql);
+		$this->dh->ExecNoneQuery($sql);
 	}
 
-	public static function RemoveTables($database)
+	public function RemoveTables()
 	{
-		$dh = new DataHelperMySql($database,'root','');
 		$sql = 'DROP TABLE iolmasters';
-		$dh->ExecNoneQuery($sql);
-
+		$this->dh->ExecNoneQuery($sql);
 	}
 
 

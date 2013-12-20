@@ -1,6 +1,6 @@
 <?php
 
-include 'IOL.php';
+include '/Components/IOL.php';
 $IOLMasters = IOL::ListIOLMasters();
 
 foreach($IOLMasters as $IOLMaster)

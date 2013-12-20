@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-include '../IOL.php';
-include '../DataHelperAccess.php';
+include '../Components/IOL.php';
+include '../Components/DataHelperAccess.php';
 
 class IOLTest extends PHPUnit_Framework_TestCase {
 
