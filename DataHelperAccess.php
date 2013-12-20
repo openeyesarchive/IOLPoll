@@ -24,6 +24,7 @@ class DataHelperAccess {
 		return $data;
 	}
 
+
 	public function GetTables()
 	{
 		$result = odbc_tables($this->con);

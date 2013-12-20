@@ -6,8 +6,23 @@ class DataHelperMySQL {
 
 	public function __construct($database,$username,$password)
 	{
-		$db = new PDO("mysql:host=localhost;dbname=$database", $username, $password);
-		$this->db=$db;
+		try {
+			$db = new PDO("mysql:host=localhost;dbname=$database", $username, $password);
+			$this->db=$db;
+		} catch (PDOException $e) {
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+		catch (Exception $e){
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+
+	}
+
+	public function Prepare($sql)
+	{
+		return $this->db->prepare($sql);
 	}
 
 	public function Get($sql)
@@ -17,7 +32,20 @@ class DataHelperMySQL {
 
 	public function ExecNoneQuery($sql)
 	{
-		return $this->db->query($sql)->execute();
+		try {
+			if(!$query = $this->db->query($sql)){
+				print "Error in query";
+				die();
+			}
+		} catch (PDOException $e) {
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+		catch (Exception $e){
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+		return $query->execute();
 	}
 }
 

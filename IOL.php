@@ -6,18 +6,30 @@ include_once 'DataHelperAccess.php';
 
 class IOL {
 
-	public static function PollData($IOLMaster)
+	private $dh;
+
+	public function __construct($dh)
 	{
-		$dh = new DataHelperAccess($IOLMaster['filepath'],'', 'Hic2003Jack');
-		$data = $dh->GetSQL("select * from patient");
+		$this->dh=$dh;
+	}
+
+	public function PollData($IOLMaster)
+	{
+		$dh = new DataHelperAccess($IOLMaster['filepath'],'', 'Meditec');
+		$data = $this->dh->GetSQL("select * from patient");
 		var_dump($data);
 	}
 
-	public static function ListIOLMasters()
+	public function ListIOLMasters()
 	{
-		$dh = new DataHelperMySQL('iolmasters','root','');
-		$pdo = $dh->Get("select * from iolmasters");
+		$pdo = $this->dh->Get("select * from iolmasters");
 		return $pdo;
+	}
+
+	public function Add($id,$filepath)
+	{
+		$prep = $this->dh->prepare("insert into iolmasters (id,filepath) values (':id',':filepath')");
+		$prep->execute(array(":id" => $id, ":filepath" =>$filepath));
 	}
 
 	public function Unavailable($IOLMaster)

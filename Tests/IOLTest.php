@@ -15,7 +15,6 @@ class IOLTest extends PHPUnit_Framework_TestCase {
 	public function testListIOLMasters()
 	{
 		$IOLMasters = IOL::ListIOLMasters();
-
 		$this->AssertTrue(is_array($IOLMasters));
 		$this->AssertTrue(count($IOLMasters) > 0);
 	}

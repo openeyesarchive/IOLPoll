@@ -1,13 +1,19 @@
 <?php
 
-include '../DataHelperMySQL.php';
-include '../Install.php';
+include_once '../DataHelperMySQL.php';
+include_once  '../Install.php';
+include_once  '../IOL.php';
 
 class DatabaseTest extends PHPUnit_Framework_TestCase {
 
+	private $dh;
+
 	protected function setUp()
 	{
+		$this->dh=new DataHelperMySQL('iolmasters_test','root','');
 		Install::SetUpDatabase('iolmasters_test');
+		$iol = new IOL($this->dh);
+		$iol->Add('testiol','\\unreachable\unreachable.mdb');
 	}
 
 	protected function tearDown()
@@ -16,8 +22,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testListIOLMasters(){
-		$dh = new DataHelperMySQL('iolmasters_test','root','');
-		$pdo = $dh->Get("select * from iolmasters");
+		$pdo = $this->dh->Get("select * from iolmasters");
 		$this->AssertTrue(count($pdo) > 0);
 	}
 

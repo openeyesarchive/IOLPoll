@@ -15,7 +15,7 @@ class Install {
 	{
 		$dh = new DataHelperMySql($database,'root','');
 
-		$sql = "CREATE TABLE IF NOT EXISTS `iolmasters` (
+		$sql = "CREATE TABLE `iolmasters` (
 				`id` VARCHAR(50) NOT NULL,
 				`filepath` VARCHAR(255) NOT NULL,
 				`lastchecked` DATE NULL,
