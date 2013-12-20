@@ -16,8 +16,18 @@ class IOL {
 	public function PollData($IOLMaster)
 	{
 		$dh = new DataHelperAccess($IOLMaster['filepath'],'', 'Meditec');
-		$data = $this->dh->GetSQL("select * from patient");
-		var_dump($data);
+		$data = $dh->GetSQL("select * from patientdata");
+
+		foreach($data as $row){
+			$record=serialize($row);
+			$checksum = sha1($record);
+			$prep = $this->dh->prepare("insert into ioldata (id,checksum,record,dateadded) values (:id,:checksum,:record,now())");
+			
+			//this will fail silently if the checksum is already in the database
+			$prep->execute(array(":id" => $IOLMaster['id'], ":checksum" =>$checksum, ":record"=>$record));
+
+		}
+
 	}
 
 	public function ListIOLMasters()
@@ -28,7 +38,7 @@ class IOL {
 
 	public function Add($id,$filepath)
 	{
-		$prep = $this->dh->prepare("insert into iolmasters (id,filepath) values (':id',':filepath')");
+		$prep = $this->dh->prepare("insert into iolmasters (id,filepath) values (:id,:filepath)");
 		$prep->execute(array(":id" => $id, ":filepath" =>$filepath));
 	}
 

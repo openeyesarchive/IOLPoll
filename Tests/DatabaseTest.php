@@ -15,16 +15,20 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 		$this->dh=new DataHelperMySQL($config['tests']['db']['connectionString'],$config['tests']['db']['username'],$config['tests']['db']['password']);
 
 		$install = new Install($this->dh);
+
 		$this->install = $install;
+		$this->install->RemoveTables('iolmasters_test');
 		$this->install->SetUpDatabase('iolmasters_test');
 
 		$iol = new IOL($this->dh);
 		$iol->Add('testiol','\\unreachable\unreachable.mdb');
+		$iol->Add('sample','IOLSample.mdb');
 	}
+
 
 	protected function tearDown()
 	{
-		$this->install->RemoveTables('iolmasters_test');
+
 	}
 
 	public function testListIOLMasters()
@@ -45,15 +49,29 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 		$iol= new IOL($this->dh);
 		$IOLMasters =$iol->ListIOLMasters();
 
+		$reachable=true;
+		foreach($IOLMasters as $IOLMaster)
+		{
+			if(!file_exists($IOLMaster['filepath'])){
+				$reachable=false;
+			}
+		}
+		$this->AssertFalse($reachable);
+	}
+
+	public function testPollShouldBeSomeReachableIOLMasters()
+	{
+		$iol= new IOL($this->dh);
+		$IOLMasters =$iol->ListIOLMasters();
+
+		$reachable=false;
 		foreach($IOLMasters as $IOLMaster)
 		{
 			if(file_exists($IOLMaster['filepath'])){
-				die('should not be reachable');
-			}
-			else{
-				$iol->Unavailable($IOLMaster);
+				$reachable=true;
 			}
 		}
+		$this->AssertTrue($reachable);
 	}
 
 	public function testSampleDB()
@@ -62,4 +80,24 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 		$data = $dh->GetSQL("select * from patientdata");
 		$this->AssertTrue(count($data) > 0);
 	}
+
+	public function testPullDataFromReachableIOLMaster()
+	{
+		$iol= new IOL($this->dh);
+		$IOLMasters =$iol->ListIOLMasters();
+
+		foreach($IOLMasters as $IOLMaster)
+		{
+			if(file_exists($IOLMaster['filepath'])){
+				$iol->PollData($IOLMaster);
+			}
+
+
+		}
+
+		$data=$this->dh->Get("select * from ioldata");
+		$this->AssertTrue(count($data) > 0);
+	}
+
+
 }

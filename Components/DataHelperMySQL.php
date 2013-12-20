@@ -27,7 +27,20 @@ class DataHelperMySQL {
 
 	public function Get($sql)
 	{
-		return $this->db->query($sql)->fetchAll();
+		try {
+			if(!$query = $this->db->query($sql)){
+				print "Error in query";
+				die(var_export($this->db->errorinfo(), TRUE));
+			}
+		} catch (PDOException $e) {
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+		catch (Exception $e){
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+		return $query->fetchAll();
 	}
 
 	public function ExecNoneQuery($sql)
