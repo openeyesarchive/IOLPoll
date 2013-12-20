@@ -24,6 +24,11 @@ class DataHelperAccess {
 		return $data;
 	}
 
+	public function ExecNoneQuery($sql)
+	{
+		return odbc_exec($this->con,$sql);
+	}
+
 
 	public function GetTables()
 	{

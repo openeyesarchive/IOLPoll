@@ -27,8 +27,39 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 		$this->install->RemoveTables('iolmasters_test');
 	}
 
-	public function testListIOLMasters(){
+	public function testListIOLMasters()
+	{
+		$iol= new IOL($this->dh);
+		$IOLMasters = $iol->ListIOLMasters();
+		$this->AssertTrue(is_array($IOLMasters));
+		$this->AssertTrue(count($IOLMasters) > 0);
+	}
+
+	public function testDBListIOLMasters(){
 		$pdo = $this->dh->Get("select * from iolmasters");
 		$this->AssertTrue(count($pdo) > 0);
+	}
+
+	public function testPollShouldBeUnreachableIOLMasters()
+	{
+		$iol= new IOL($this->dh);
+		$IOLMasters =$iol->ListIOLMasters();
+
+		foreach($IOLMasters as $IOLMaster)
+		{
+			if(file_exists($IOLMaster['filepath'])){
+				die('should not be reachable');
+			}
+			else{
+				$iol->Unavailable($IOLMaster);
+			}
+		}
+	}
+
+	public function testSampleDB()
+	{
+		$dh = new DataHelperAccess('IOLSample.mdb','', 'Meditec');
+		$data = $dh->GetSQL("select * from patientdata");
+		$this->AssertTrue(count($data) > 0);
 	}
 }
