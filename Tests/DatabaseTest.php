@@ -6,21 +6,21 @@ include_once '../Components/IOL.php';
 include_once '../Config/config.php';
 
 class DatabaseTest extends PHPUnit_Framework_TestCase {
-	private $dh;
+	private $db;
 	private $install;
 
 	protected function setUp()
 	{
 		$config=Config::Load();
-		$this->dh=new DataHelperMySQL($config['tests']['db']['connectionString'],$config['tests']['db']['username'],$config['tests']['db']['password']);
+		$this->db=new DataHelperMySQL($config['tests']['db']['connectionString'],$config['tests']['db']['username'],$config['tests']['db']['password']);
 
-		$install = new Install($this->dh);
+		$install = new Install($this->db);
 
 		$this->install = $install;
 		$this->install->RemoveTables('iolmasters_test');
 		$this->install->SetUpDatabase('iolmasters_test');
 
-		$iol = new IOL($this->dh);
+		$iol = new IOL($this->db);
 		$iol->Add('testiol','\\unreachable\unreachable.mdb');
 		$iol->Add('sample','IOLSample.mdb');
 	}
@@ -33,20 +33,20 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 
 	public function testListIOLMasters()
 	{
-		$iol= new IOL($this->dh);
+		$iol= new IOL($this->db);
 		$IOLMasters = $iol->ListIOLMasters();
 		$this->AssertTrue(is_array($IOLMasters));
 		$this->AssertTrue(count($IOLMasters) > 0);
 	}
 
 	public function testDBListIOLMasters(){
-		$pdo = $this->dh->Get("select * from iolmasters");
+		$pdo = $this->db->Get("select * from iolmasters");
 		$this->AssertTrue(count($pdo) > 0);
 	}
 
 	public function testPollShouldBeUnreachableIOLMasters()
 	{
-		$iol= new IOL($this->dh);
+		$iol= new IOL($this->db);
 		$IOLMasters =$iol->ListIOLMasters();
 
 		$reachable=true;
@@ -61,7 +61,7 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 
 	public function testPollShouldBeSomeReachableIOLMasters()
 	{
-		$iol= new IOL($this->dh);
+		$iol= new IOL($this->db);
 		$IOLMasters =$iol->ListIOLMasters();
 
 		$reachable=false;
@@ -76,14 +76,14 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 
 	public function testSampleDB()
 	{
-		$dh = new DataHelperAccess('IOLSample.mdb','', 'Meditec');
-		$data = $dh->GetSQL("select * from patientdata");
+		$db = new DataHelperAccess('IOLSample.mdb','', 'Meditec');
+		$data = $db->GetSQL("select * from patientdata");
 		$this->AssertTrue(count($data) > 0);
 	}
 
 	public function testPullDataFromReachableIOLMaster()
 	{
-		$iol= new IOL($this->dh);
+		$iol= new IOL($this->db);
 		$IOLMasters =$iol->ListIOLMasters();
 
 		foreach($IOLMasters as $IOLMaster)
@@ -91,13 +91,28 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 			if(file_exists($IOLMaster['filepath'])){
 				$iol->PollData($IOLMaster);
 			}
-
-
+			else
+			{
+				$iol->LastChecked($IOLMaster);
+			}
 		}
 
-		$data=$this->dh->Get("select * from ioldata");
+		$data=$this->db->Get("select * from ioldata");
 		$this->AssertTrue(count($data) > 0);
+
+		$data=$this->db->Get("select * from iolmasters where lastavailable is not null");
+		$this->AssertTrue(count($data) > 0);
+
+		$data=$this->db->Get("select * from iolmasters where lastavailable is null");
+		$this->AssertTrue(count($data) > 0);
+
+		$data=$this->db->Get("select * from iolmasters where lastchecked is not null");
+		$this->AssertTrue(count($data)==2);
+
 	}
+
+
+
 
 
 }

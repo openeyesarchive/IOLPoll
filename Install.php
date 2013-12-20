@@ -12,11 +12,11 @@ include_once '/Config/config.php';
 
 class Install {
 
-	private $dh;
+	private $db;
 
-	public function __construct($dh)
+	public function __construct($db)
 	{
-		$this->dh=$dh;
+		$this->db=$db;
 	}
 
 	public function SetUpDatabase()
@@ -30,7 +30,7 @@ class Install {
 				COLLATE='utf16_bin'
 				ENGINE=InnoDB;";
 
-		$this->dh->ExecNoneQuery($sql);
+		$this->db->ExecNoneQuery($sql);
 
 		$sql = "CREATE TABLE `ioldata` (
 				`id` VARCHAR(50) NOT NULL COLLATE 'utf16_bin',
@@ -42,16 +42,16 @@ class Install {
 				COLLATE='utf16_bin'
 				ENGINE=InnoDB;";
 
-		$this->dh->ExecNoneQuery($sql);
+		$this->db->ExecNoneQuery($sql);
 	}
 
 	public function RemoveTables()
 	{
 
 		$sql = 'DROP TABLE IF EXISTS iolmasters';
-		$this->dh->ExecNoneQuery($sql);
+		$this->db->ExecNoneQuery($sql);
 		$sql = 'DROP TABLE IF EXISTS ioldata';
-		$this->dh->ExecNoneQuery($sql);
+		$this->db->ExecNoneQuery($sql);
 
 
 	}

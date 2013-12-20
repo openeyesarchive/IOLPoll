@@ -29,7 +29,7 @@ class DataHelperMySQL {
 	{
 		try {
 			if(!$query = $this->db->query($sql)){
-				print "Error in query";
+				echo "Error in query";
 				die(var_export($this->db->errorinfo(), TRUE));
 			}
 		} catch (PDOException $e) {
@@ -37,7 +37,7 @@ class DataHelperMySQL {
 			die();
 		}
 		catch (Exception $e){
-			print "Error!: " . $e->getMessage();
+			echo "Error!: " . $e->getMessage();
 			die();
 		}
 		return $query->fetchAll();
@@ -59,6 +59,25 @@ class DataHelperMySQL {
 			die();
 		}
 		return $query->execute();
+	}
+
+	public function ExecPrepared($sql,$values)
+	{
+		try {
+			$prep = $this->db->prepare($sql);
+			if(!$return = $prep->execute($values)){
+				print "Error in query";
+				die(var_export($this->db->errorinfo(), TRUE));
+			}
+		} catch (PDOException $e) {
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+		catch (Exception $e){
+			print "Error!: " . $e->getMessage();
+			die();
+		}
+		return $return;
 	}
 }
 
