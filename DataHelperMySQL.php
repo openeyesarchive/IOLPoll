@@ -2,17 +2,22 @@
 
 class DataHelperMySQL {
 
-private $db;
+	private $db;
 
-public function __construct($database,$username,$password)
-{
-	$db = new PDO("mysql:host=localhost;dbname=$database", $username, $password);
-	$this->db=$db;
-}
+	public function __construct($database,$username,$password)
+	{
+		$db = new PDO("mysql:host=localhost;dbname=$database", $username, $password);
+		$this->db=$db;
+	}
 
-public function Get($sql)
-{
-	return $this->db->query($sql)->fetchAll();
-}
+	public function Get($sql)
+	{
+		return $this->db->query($sql)->fetchAll();
+	}
+
+	public function ExecNoneQuery($sql)
+	{
+		return $this->db->query($sql)->execute();
+	}
 }
 

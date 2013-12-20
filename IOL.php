@@ -1,8 +1,8 @@
 <?php
 
 
-include 'DataHelperMySQL.php';
-include 'DataHelperAccess.php';
+include_once 'DataHelperMySQL.php';
+include_once 'DataHelperAccess.php';
 
 class IOL {
 
