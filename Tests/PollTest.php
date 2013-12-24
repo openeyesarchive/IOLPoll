@@ -5,7 +5,7 @@ include_once '../components/Install.php';
 include_once '../Components/IOL.php';
 include_once '../Config/config.php';
 
-class DatabaseTest extends PHPUnit_Framework_TestCase {
+class PollTest extends PHPUnit_Framework_TestCase {
 	private $db;
 	private $install;
 	private $config;

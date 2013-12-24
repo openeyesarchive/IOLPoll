@@ -7,8 +7,8 @@
  * To change this template use File | Settings | File Templates.
  */
 
-include_once '/Components/DataHelperMySQL.php';
-include_once '/Config/config.php';
+include_once 'DataHelperMySQL.php';
+include_once '../Config/config.php';
 
 class Install {
 
@@ -52,13 +52,6 @@ class Install {
 		$sql = 'DROP TABLE IF EXISTS ioldata';
 		$this->db->ExecNoneQuery($sql);
 	}
-
-	public function Install()
-	{
-
-	}
-
-
 }
 
 
