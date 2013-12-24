@@ -22,7 +22,17 @@ class DataHelperMySQL {
 
 	public function Prepare($sql)
 	{
-		return $this->db->prepare($sql);
+		try {
+			if(!$prep = $this->db->prepare($sql)){
+				echo "Error in query";
+				throw new Exception(var_export($this->db->errorinfo(), TRUE));
+			}
+		}
+		catch (Exception $e){
+			print "Error!: " . $e->getMessage();
+			throw($e);
+		}
+		return $prep;
 	}
 
 	public function Get($sql)

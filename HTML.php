@@ -46,4 +46,20 @@ class HTML {
 		$iol->Add($post['id'],$post['path']);
 		header("location: /admin/viewiolmasters.php");
 	}
+
+	public static function ViewIOLMaster($id)
+	{
+		$db=self::DB();
+		$master = $db->Prepare("select * from iolmasters where id=:id");
+		$master->execute(array(':id'=>$id));
+		$iolmaster=($master->fetch());
+		echo "ID:".$iolmaster["id"]."<BR>";
+		echo "Path:".$iolmaster["filepath"]."<BR>";
+		echo "Lastchecked:".$iolmaster["lastchecked"]."<BR>";
+		echo "Lastavailable:".$iolmaster["lastavailable"]."<BR><BR>";
+
+		echo "<a href='/admin/editiolmaster.php?id=".$iolmaster['id']."'>Edit</a> ";
+		echo "<a href='/admin/deleteiolmaster.php?id=".$iolmaster['id']."'>Delete</a><BR>";
+
+	}
 }
