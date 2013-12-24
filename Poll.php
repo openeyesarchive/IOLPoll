@@ -31,11 +31,12 @@ if(!$IOLMasters){
 
 foreach($IOLMasters as $IOLMaster)
 {
+	echo "Polling data from ".$IOLMaster['id']."\r\n";
 	if(file_exists($IOLMaster['filepath'])){
-		echo "\r\nPolling data from ".$IOLMaster['id']."\r\n";
-		IOL::PollData($IOLMaster);
+		$iol->PollData($IOLMaster);
 	}
 	else{
-		IOL::LastChecked($IOLMaster);
+		echo $IOLMaster['id']." Unreachable\r\n";
+		$iol->LastChecked($IOLMaster);
 	}
 }

@@ -1,14 +1,6 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: Administrator
- * Date: 12/20/13
- * Time: 8:50 AM
- * To change this template use File | Settings | File Templates.
- */
 
 include_once 'DataHelperMySQL.php';
-include_once '../Config/config.php';
 
 class Install {
 

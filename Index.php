@@ -2,8 +2,8 @@
 ?>
 <h1>IOL Masters</h1>
 
-<a href='/admin/addiolmaster/'>Add IOL Master</a><br>
-<a href='/admin/viewiolmasters/'>View IOL Masters</a>
+<a href='/admin/addiolmaster.php'>Add IOL Master</a><br>
+<a href='/admin/viewiolmasters.php'>View IOL Masters</a>
 
 <br><br>Stats:<br><br>
 
