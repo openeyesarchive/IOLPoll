@@ -38,6 +38,20 @@ class IOL {
 
 	}
 
+	public function Get($id)
+	{
+		$pdo = $this->db->Prepare("select * from iolmasters where id=:id");
+		$pdo->execute(array(':id'=>$id));
+		$res=$pdo->fetch();
+		return $res;
+	}
+
+	public function Delete($id)
+	{
+		$pdo = $this->db->Prepare("delete from iolmasters where id=:id");
+		$pdo->execute(array(':id'=>$id));
+	}
+
 	public function ListIOLMasters()
 	{
 		$pdo = $this->db->Get("select * from iolmasters");

@@ -50,9 +50,8 @@ class HTML {
 	public static function ViewIOLMaster($id)
 	{
 		$db=self::DB();
-		$master = $db->Prepare("select * from iolmasters where id=:id");
-		$master->execute(array(':id'=>$id));
-		$iolmaster=($master->fetch());
+		$iol = new IOL($db);
+		$iolmaster=$iol->Get($id);
 		echo "ID:".$iolmaster["id"]."<BR>";
 		echo "Path:".$iolmaster["filepath"]."<BR>";
 		echo "Lastchecked:".$iolmaster["lastchecked"]."<BR>";
@@ -62,4 +61,23 @@ class HTML {
 		echo "<a href='/admin/deleteiolmaster.php?id=".$iolmaster['id']."'>Delete</a><BR>";
 
 	}
+
+	public static function GetIOLMaster($id)
+	{
+		$db=self::DB();
+		$iol = new IOL($db);
+		return $iol->Get($id);
+	}
+
+	public static function DeleteIOLMaster($id)
+	{
+		$db=self::DB();
+		$iol=new IOL($db);
+		$iol->Delete($id);
+		header("location: /admin/viewiolmasters.php");
+	}
+
+
 }
+?>
+<a href='/'>Menu</a><BR>

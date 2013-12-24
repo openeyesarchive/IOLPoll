@@ -33,6 +33,23 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	}
 
+	public function testGetIOLMaster()
+	{
+		$iol = new IOL($this->db);
+		$iolmaster = $iol->Get('sample');
+		$this->AssertTrue($iolmaster['filepath']=='IOLSample.mdb');
+	}
+
+	public function testDeleteIOLMaster()
+	{
+		$iol = new IOL($this->db);
+		$iol->Add('delme','test');
+		$iol->Delete('delme');
+		$iolmaster = $iol->Get('delme');
+		$this->AssertFalse($iolmaster);
+	}
+
+
 
 	public function testCheckPermissionsShouldFail()
 	{
