@@ -4,18 +4,18 @@ class DataHelperMySQL {
 
 	private $db;
 
-	public function __construct($database,$username,$password)
+	public function __construct($con,$username,$password)
 	{
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=$database", $username, $password);
+			$db = new PDO($con, $username, $password);
 			$this->db=$db;
 		} catch (PDOException $e) {
 			print "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 		catch (Exception $e){
 			print "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 
 	}
@@ -30,15 +30,15 @@ class DataHelperMySQL {
 		try {
 			if(!$query = $this->db->query($sql)){
 				echo "Error in query";
-				die(var_export($this->db->errorinfo(), TRUE));
+				throw new Exception(var_export($this->db->errorinfo(), TRUE));
 			}
 		} catch (PDOException $e) {
 			print "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 		catch (Exception $e){
 			echo "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 		return $query->fetchAll();
 	}
@@ -52,11 +52,11 @@ class DataHelperMySQL {
 			}
 		} catch (PDOException $e) {
 			print "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 		catch (Exception $e){
 			print "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 		return $query->execute();
 	}
@@ -71,13 +71,31 @@ class DataHelperMySQL {
 			}
 		} catch (PDOException $e) {
 			print "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 		catch (Exception $e){
 			print "Error!: " . $e->getMessage();
-			die();
+			throw($e);
 		}
 		return $return;
+	}
+
+	public static function CheckPermissions($con,$username,$password)
+	{
+		try {
+			$db = new PDO($con, $username, $password);
+		} catch(Exception $e){
+			echo $e->getMessage();
+			return false;
+		}
+		return true;
+	}
+
+	public function TableExists($table)
+	{
+		$results = $this->db->query("SHOW TABLES LIKE '$table'");
+		if($results->rowCount()>0) return true;
+		return false;
 	}
 }
 

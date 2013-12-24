@@ -1,18 +1,20 @@
 <?php
 
 include_once '../Components/DataHelperMySQL.php';
-include_once  '../Install.php';
+include_once '../components/Install.php';
 include_once '../Components/IOL.php';
 include_once '../Config/config.php';
 
 class DatabaseTest extends PHPUnit_Framework_TestCase {
 	private $db;
 	private $install;
+	private $config;
 
 	protected function setUp()
 	{
-		$config=Config::Load();
-		$this->db=new DataHelperMySQL($config['tests']['db']['connectionString'],$config['tests']['db']['username'],$config['tests']['db']['password']);
+		$this->config=Config::Load();
+
+		$this->db=new DataHelperMySQL($this->config['tests']['db']['connectionString'],$this->config['tests']['db']['username'],$this->config['tests']['db']['password']);
 
 		$install = new Install($this->db);
 
@@ -29,6 +31,31 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 	protected function tearDown()
 	{
 
+	}
+
+
+	public function testCheckPermissionsShouldFail()
+	{
+		$permissions=DataHelperMySQL::CheckPermissions('mysql:host=localhost;dbname=doesntexist','withexception','orinvalidpassword');
+		$this->AssertFalse($permissions);
+	}
+
+	public function testCheckPermissionsShouldSucceed()
+	{
+		$permissions=DataHelperMySQL::CheckPermissions($this->config['tests']['db']['connectionString'],$this->config['tests']['db']['username'],$this->config['tests']['db']['password']);
+		$this->AssertTrue($permissions);
+	}
+
+	public function testCheckInstalledShouldFail()
+	{
+		$table = $this->db->TableExists('fail');
+		$this->AssertFalse($table);
+	}
+
+	public function testCheckInstalledShouldSucceed()
+	{
+		$table = $this->db->TableExists('iolmasters');
+		$this->AssertTrue($table);
 	}
 
 	public function testListIOLMasters()
@@ -110,6 +137,8 @@ class DatabaseTest extends PHPUnit_Framework_TestCase {
 		$this->AssertTrue(count($data)==2);
 
 	}
+
+
 
 
 

@@ -47,14 +47,18 @@ class Install {
 
 	public function RemoveTables()
 	{
-
 		$sql = 'DROP TABLE IF EXISTS iolmasters';
 		$this->db->ExecNoneQuery($sql);
 		$sql = 'DROP TABLE IF EXISTS ioldata';
 		$this->db->ExecNoneQuery($sql);
+	}
 
+	public function Install()
+	{
 
 	}
 
 
 }
+
+
