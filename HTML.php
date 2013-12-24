@@ -1,7 +1,9 @@
 <?php
 
 include_once 'Components/DataHelperMySQL.php';
+include_once 'Components/IOL.php';
 include_once 'Config/config.php';
+
 
 class HTML {
 
@@ -35,5 +37,13 @@ class HTML {
 			echo "<a href='/admin/viewiolmaster.php?id=".$master['id']."'>".$master['id']."</a><BR>";
 
 		}
+	}
+
+	public static function PostNewIOLMaster($post)
+	{
+		$db=self::DB();
+		$iol=new IOL($db);
+		$iol->Add($post['id'],$post['path']);
+		header("location: /admin/viewiolmasters.php");
 	}
 }
