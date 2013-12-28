@@ -56,7 +56,7 @@ class HTML {
 		echo "Path:".$iolmaster["filepath"]."<BR>";
 		echo "Lastchecked:".$iolmaster["lastchecked"]."<BR>";
 		echo "Lastavailable:".$iolmaster["lastavailable"]."<BR><BR>";
-
+		echo "Notes:".$iolmaster["notes"]."<BR><BR>";
 		echo "<a href='/admin/editiolmaster.php?id=".$iolmaster['id']."'>Edit</a> ";
 		echo "<a href='/admin/deleteiolmaster.php?id=".$iolmaster['id']."'>Delete</a><BR>";
 
@@ -76,6 +76,16 @@ class HTML {
 		$iol->Delete($id);
 		header("location: /admin/viewiolmasters.php");
 	}
+
+	public static function UpdateIOLMaster($post)
+	{
+		$db=self::DB();
+		$iol=new IOL($db);
+		$iol->Update($post['id'],$post['path']);
+		header("location: /admin/viewiolmaster.php?id=".$post['id']);
+	}
+
+
 
 
 }

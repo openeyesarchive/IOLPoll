@@ -58,9 +58,14 @@ class IOL {
 		return $pdo;
 	}
 
-	public function Add($id,$filepath)
+	public function Add($id,$filepath, $notes)
 	{
-		$this->db->ExecPrepared("insert into iolmasters (id,filepath) values (:id,:filepath)",array(":id" => $id, ":filepath" =>$filepath));
+		$this->db->ExecPrepared("insert into iolmasters (id,filepath,notes) values (:id,:filepath,:notes)",array(":id" => $id, ":filepath" =>$filepath,":notes" =>$notes));
+	}
+
+	public function Update($id,$filepath,$notes)
+	{
+		$this->db->ExecPrepared("update iolmasters set filepath=:filepath, notes=:notes where id=:id",array(":id" => $id, ":filepath" =>$filepath,":notes" =>$notes));
 	}
 
 	public function LastChecked($IOLMaster)

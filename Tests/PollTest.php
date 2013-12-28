@@ -23,8 +23,8 @@ class PollTest extends PHPUnit_Framework_TestCase {
 		$this->install->SetUpDatabase('iolmasters_test');
 
 		$iol = new IOL($this->db);
-		$iol->Add('testiol','\\unreachable\unreachable.mdb');
-		$iol->Add('sample','IOLSample.mdb');
+		$iol->Add('testiol','\\unreachable\unreachable.mdb','notes');
+		$iol->Add('sample','IOLSample.mdb','notes');
 	}
 
 
@@ -43,12 +43,21 @@ class PollTest extends PHPUnit_Framework_TestCase {
 	public function testDeleteIOLMaster()
 	{
 		$iol = new IOL($this->db);
-		$iol->Add('delme','test');
+		$iol->Add('delme','test','notes');
 		$iol->Delete('delme');
 		$iolmaster = $iol->Get('delme');
 		$this->AssertFalse($iolmaster);
 	}
 
+	public function testUpdateIOLMaster()
+	{
+		$iol = new IOL($this->db);
+		$iol->Add('update','test','notes');
+		$iol->Update('update','newvalue','newnotes');
+		$iolmaster = $iol->Get('update');
+		$this->AssertTrue($iolmaster['filepath']=='newvalue');
+		$this->AssertTrue($iolmaster['notes']=='newnotes');
+	}
 
 
 	public function testCheckPermissionsShouldFail()
