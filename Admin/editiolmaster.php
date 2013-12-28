@@ -13,6 +13,6 @@ if( isset($_POST['id']) &&  isset($_POST['path']) ){
 <form method="POST" action="editiolmaster.php">
 	ID: <input type="text" name="id" value="<?=$iol["id"]?>"><br>
 	Path: <input type="text" name="path" value="<?=$iol["filepath"]?>"><br>
-	Notes: <input type="text" name="path" value="<?=$iol["notes"]?>"><br>
+	Notes: <textarea name="notes"><?=$iol["notes"]?></textarea><br>
 	<input type="submit" value="Submit">
 </form>

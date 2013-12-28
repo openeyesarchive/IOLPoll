@@ -43,7 +43,7 @@ class HTML {
 	{
 		$db=self::DB();
 		$iol=new IOL($db);
-		$iol->Add($post['id'],$post['path']);
+		$iol->Add($post['id'],$post['path'],$post['notes']);
 		header("location: /admin/viewiolmasters.php");
 	}
 
@@ -81,7 +81,7 @@ class HTML {
 	{
 		$db=self::DB();
 		$iol=new IOL($db);
-		$iol->Update($post['id'],$post['path']);
+		$iol->Update($post['id'],$post['path'],$post['notes']);
 		header("location: /admin/viewiolmaster.php?id=".$post['id']);
 	}
 

@@ -9,6 +9,6 @@ if( isset($_POST['id']) &&  isset($_POST['path']) ){
 <form method="POST" action="addiolmaster.php">
 	ID: <input type="text" name="id"><br>
 	Path: <input type="text" name="path"><br>
-	Notes: <input type="text" name="path"><br>
+	Notes: <textarea name="notes"></textarea><br>
 	<input type="submit" value="Submit">
 </form>
