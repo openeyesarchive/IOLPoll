@@ -1,0 +1,31 @@
+
+
+
+body {
+	FONT-FAMILY: arial, verdana, helvetica, arial, sans-serif; FONT-SIZE: 14px;
+}
+
+H1
+{
+	COLOR: black; FONT-FAMILY: arial, verdana, helvetica, arial, sans-serif;
+}
+
+H2
+{
+	COLOR: black; FONT-FAMILY: arial, verdana, helvetica, arial, sans-serif;
+}
+
+P {
+	FONT-FAMILY: verdana, helvetica, arial, sans-serif; FONT-SIZE: 12px
+}
+
+A {
+	COLOR: black; FONT-FAMILY: arial, verdana, helvetica, arial, sans-serif; FONT-WEIGHT: bold
+}
+A:visited {
+	COLOR: black ; FONT-FAMILY: arial, verdana, helvetica, arial, sans-serif
+}
+A:hover {
+	COLOR: black; FONT-FAMILY: arial, verdana, helvetica, arial, sans-serif
+}
+

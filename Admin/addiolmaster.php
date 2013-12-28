@@ -1,4 +1,5 @@
 <?php include_once '../HTML.php';?>
+<?php include_once 'header.php';?>
 <?php
 if( isset($_POST['id']) &&  isset($_POST['path']) ){
 	HTML::PostNewIOLMaster($_POST);
@@ -12,3 +13,4 @@ if( isset($_POST['id']) &&  isset($_POST['path']) ){
 	Notes: <textarea name="notes"></textarea><br>
 	<input type="submit" value="Submit">
 </form>
+<?php include_once 'footer.php';?>

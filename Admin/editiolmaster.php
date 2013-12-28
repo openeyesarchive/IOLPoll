@@ -1,4 +1,5 @@
 <?php include_once '../HTML.php';?>
+<?php include_once 'header.php';?>
 
 <h1>Edit IOL Master</h1>
 
@@ -16,3 +17,4 @@ if( isset($_POST['id']) &&  isset($_POST['path']) ){
 	Notes: <textarea name="notes"><?=$iol["notes"]?></textarea><br>
 	<input type="submit" value="Submit">
 </form>
+<?php include_once 'footer.php';?>
