@@ -102,6 +102,13 @@ class PollTest extends PHPUnit_Framework_TestCase {
 		$this->AssertTrue($reachable == 1);
 	}
 
+	public function testStatsUnReachable(){
+		$this->iol->LastChecked('sample');
+		$this->db->ExecNoneQuery("update iolmasters set lastavailable=DATE_SUB(NOW(), INTERVAL 720 MINUTE) where id='sample'");
+		$unreachable=$this->iol->Unreachable();
+		$this->AssertTrue($unreachable == 1);
+	}
+
 	public function testStatsLastPolled(){
 		$start = new DateTime();
 		$this->iol->LastChecked('sample');
@@ -160,7 +167,7 @@ class PollTest extends PHPUnit_Framework_TestCase {
 			}
 			else
 			{
-				$this->iol->LastChecked($IOLMaster);
+				$this->iol->LastChecked($IOLMaster['id']);
 			}
 		}
 

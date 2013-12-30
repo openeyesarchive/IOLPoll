@@ -93,6 +93,11 @@ class IOL {
 		return $this->db->GetValue ("select count(*) from iolmasters where lastavailable >= lastchecked limit 0,1");
 	}
 
+	public function Unreachable()
+	{
+		return $this->db->GetValue ("select count(*) from iolmasters where lastavailable <= Date_Add(lastchecked,interval -720 minute) limit 0,1");
+	}
+
 
 
 }

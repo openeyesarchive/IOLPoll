@@ -25,14 +25,15 @@ class HTML {
 			$isup = new DateTime("now");
 			$isup->sub(new DateInterval('PT48H'));
 			$lastavailable=new DateTime($master['lastavailable']);
+			$lastchecked=new DateTime($master['lastchecked']);
 			if(!$master['lastavailable']){
 				echo '<img src="/img/unavailable.png"> ';
 			}
-			else if(($lastavailable > $isup)) {
-				echo '<img src="/img/available.png"> ';
+			else if($lastavailable <= $lastchecked->sub(new DateInterval('PT720M'))) {
+				echo '<img src="/img/offline.png"> ';
 			}
 			else {
-				echo '<img src="/img/offline.png">';
+				echo '<img src="/img/available.png">';
 			}
 			echo "<a href='/admin/viewiolmaster.php?id=".$master['id']."'>".$master['id']."</a><BR>";
 
@@ -92,10 +93,14 @@ class HTML {
 		$count=$iol->Count();
 		$reachable=$iol->Reachable();
 		$lastpolled=$iol->LastPolled();
+		$unreachable=$iol->Unreachable();
 
 		echo "$count IOL Masters in Database<br>";
 		echo "Last polled $lastpolled<br>";
-		echo "$reachable reachable<br>";
+		echo "$reachable Online<br>";
+		echo "$unreachable Unreachable<br>";
+		$neverpolled = $count-$reachable-$unreachable;
+		echo "$neverpolled Never responded<br>";
 	}
 
 
