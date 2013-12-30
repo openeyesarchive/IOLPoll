@@ -9,6 +9,7 @@ class PollTest extends PHPUnit_Framework_TestCase {
 	private $db;
 	private $install;
 	private $config;
+	public $iol;
 
 	protected function setUp()
 	{
@@ -25,6 +26,7 @@ class PollTest extends PHPUnit_Framework_TestCase {
 		$iol = new IOL($this->db);
 		$iol->Add('testiol','\\unreachable\unreachable.mdb','notes');
 		$iol->Add('sample','IOLSample.mdb','notes');
+		$this->iol=$iol;
 	}
 
 
@@ -35,26 +37,24 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	public function testGetIOLMaster()
 	{
-		$iol = new IOL($this->db);
-		$iolmaster = $iol->Get('sample');
+		$iolmaster = $this->iol->Get('sample');
 		$this->AssertTrue($iolmaster['filepath']=='IOLSample.mdb');
 	}
 
 	public function testDeleteIOLMaster()
 	{
-		$iol = new IOL($this->db);
-		$iol->Add('delme','test','notes');
-		$iol->Delete('delme');
-		$iolmaster = $iol->Get('delme');
+
+		$this->iol->Add('delme','test','notes');
+		$this->iol->Delete('delme');
+		$iolmaster = $this->iol->Get('delme');
 		$this->AssertFalse($iolmaster);
 	}
 
 	public function testUpdateIOLMaster()
 	{
-		$iol = new IOL($this->db);
-		$iol->Add('update','test','notes');
-		$iol->Update('update','newvalue','newnotes');
-		$iolmaster = $iol->Get('update');
+		$this->iol->Add('update','test','notes');
+		$this->iol->Update('update','newvalue','newnotes');
+		$iolmaster = $this->iol->Get('update');
 		$this->AssertTrue($iolmaster['filepath']=='newvalue');
 		$this->AssertTrue($iolmaster['notes']=='newnotes');
 	}
@@ -86,10 +86,27 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	public function testListIOLMasters()
 	{
-		$iol= new IOL($this->db);
-		$IOLMasters = $iol->ListIOLMasters();
+		$IOLMasters = $this->iol->ListIOLMasters();
 		$this->AssertTrue(is_array($IOLMasters));
 		$this->AssertTrue(count($IOLMasters) > 0);
+	}
+
+	public function testStatsGetIOLCount(){
+		$this->AssertTrue($this->iol->Count() == 2);
+	}
+
+	public function testStatsGetReachable(){
+		$this->iol->LastChecked('sample');
+		$this->iol->LastAvailable('sample');
+		$reachable=$this->iol->Reachable();
+		$this->AssertTrue($reachable == 1);
+	}
+
+	public function testStatsLastPolled(){
+		$start = new DateTime();
+		$this->iol->LastChecked('sample');
+		$lastpolled = new DateTime($this->iol->LastPolled());
+		$this->AssertTrue($start <= $lastpolled);
 	}
 
 	public function testDBListIOLMasters(){
@@ -99,8 +116,7 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	public function testPollShouldBeUnreachableIOLMasters()
 	{
-		$iol= new IOL($this->db);
-		$IOLMasters =$iol->ListIOLMasters();
+		$IOLMasters =$this->iol->ListIOLMasters();
 
 		$reachable=true;
 		foreach($IOLMasters as $IOLMaster)
@@ -114,8 +130,7 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	public function testPollShouldBeSomeReachableIOLMasters()
 	{
-		$iol= new IOL($this->db);
-		$IOLMasters =$iol->ListIOLMasters();
+		$IOLMasters =$this->iol->ListIOLMasters();
 
 		$reachable=false;
 		foreach($IOLMasters as $IOLMaster)
@@ -136,17 +151,16 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	public function testPullDataFromReachableIOLMaster()
 	{
-		$iol= new IOL($this->db);
-		$IOLMasters =$iol->ListIOLMasters();
+		$IOLMasters =$this->iol->ListIOLMasters();
 
 		foreach($IOLMasters as $IOLMaster)
 		{
 			if(file_exists($IOLMaster['filepath'])){
-				$iol->PollData($IOLMaster);
+				$this->iol->PollData($IOLMaster);
 			}
 			else
 			{
-				$iol->LastChecked($IOLMaster);
+				$this->iol->LastChecked($IOLMaster);
 			}
 		}
 

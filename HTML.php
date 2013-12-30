@@ -85,6 +85,19 @@ class HTML {
 		header("location: /admin/viewiolmaster.php?id=".$post['id']);
 	}
 
+	public static function Stats()
+	{
+		$db=self::DB();
+		$iol=new IOL($db);
+		$count=$iol->Count();
+		$reachable=$iol->Reachable();
+		$lastpolled=$iol->LastPolled();
+
+		echo "$count IOL Masters in Database<br>";
+		echo "Last polled $lastpolled<br>";
+		echo "$reachable reachable<br>";
+	}
+
 
 
 

@@ -17,8 +17,8 @@ class Install {
 				`id` VARCHAR(50) NOT NULL,
 				`filepath` VARCHAR(255) NOT NULL,
 				`notes` TEXT NOT NULL,
-				`lastchecked` DATE NULL,
-				`lastavailable` DATE NULL
+				`lastchecked` DATETIME NULL,
+				`lastavailable` DATETIME NULL
 				)
 				COLLATE='utf16_bin'
 				ENGINE=InnoDB;";

@@ -8,10 +8,7 @@
 
 <br><br>Stats:<br><br>
 
-120 IOL Masters in Database<br>
-Last polled 15 minutes ago<br>
-100 reachable, 20 unreable<br>
-5 unreachable for over 24 hours<br>
+<?php include_once '/admin/stats.php';?>
 <?php include_once '/admin/footer.php';?>
 
 

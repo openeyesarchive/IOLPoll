@@ -53,6 +53,12 @@ class DataHelperMySQL {
 		return $query->fetchAll();
 	}
 
+	public function GetValue($sql)
+	{
+		$get = $this->Get($sql);
+		return $get[0][0];
+	}
+
 	public function ExecNoneQuery($sql)
 	{
 		try {

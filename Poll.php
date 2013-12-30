@@ -37,6 +37,6 @@ foreach($IOLMasters as $IOLMaster)
 	}
 	else{
 		echo $IOLMaster['id']." Unreachable\r\n";
-		$iol->LastChecked($IOLMaster);
+		$iol->LastChecked($IOLMaster['id']);
 	}
 }
