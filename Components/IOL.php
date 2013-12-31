@@ -22,16 +22,25 @@ class IOL {
 			$record=serialize($row);
 			$checksum = sha1($record);
 			$prep = $this->db->prepare("insert into ioldata (id,checksum,record,dateadded) values (:id,:checksum,:record,now())");
-
+			$id = $IOLMaster['id'];
 			//this will fail silently if the checksum is already in the database
-			$prep->execute(array(":id" => $IOLMaster['id'], ":checksum" =>$checksum, ":record"=>$record));
+			if($prep->execute(array(":id" => $id, ":checksum" =>$checksum, ":record"=>$record))){
+				$this->log("$id-$checksum Added");
+			}
+			else{
+				$this->log("$id-$checksum Already in database");
+			}
+
 
 		}
 
 		$this->LastChecked($IOLMaster['id']);
-		if($data)
-		{
+		if($data){
 			$this->LastAvailable($IOLMaster['id']);
+		}
+		else
+		{
+			$this->log("No Data Available");
 		}
 
 
@@ -96,6 +105,18 @@ class IOL {
 	public function Unreachable()
 	{
 		return $this->db->GetValue ("select count(*) from iolmasters where lastavailable <= Date_Add(lastchecked,interval -720 minute) limit 0,1");
+	}
+
+	public function Log($message)
+	{
+		$this->db->ExecPrepared("insert into iolpolllog (message,datecreated) values (:message,now())",array(":message" => $message));
+		echo "\r\n$message\r\n";
+	}
+
+	public function GetLog()
+	{
+		$pdo = $this->db->Get("select * from iolpolllog order by id desc");
+		return $pdo;
 	}
 
 

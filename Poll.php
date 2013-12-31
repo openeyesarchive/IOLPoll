@@ -17,26 +17,31 @@ if(!DataHelperMySQL::CheckPermissions($con,$username,$password)){
 
 $db=new DataHelperMySQL($con,$username,$password);
 
+$iol = new IOL($db);
+
 if(!$db->TableExists('iolmasters')){
 	$install = new Install($db);
 	$install->SetUpDatabase();
-	die("\r\nTables created\r\n");
+	$iol->log("Tables created");
+	die();
 }
 
-$iol = new IOL($db);
+$iol->log("Starting Poll");
 $IOLMasters = $iol->ListIOLMasters();
 if(!$IOLMasters){
-	echo "\r\nNothing to do. Add IOL Masters via web control panel.\r\n";
+	$iol->log("Nothing to do. Add IOL Masters via web control panel");
 }
 
 foreach($IOLMasters as $IOLMaster)
 {
-	echo "Polling data from ".$IOLMaster['id']."\r\n";
+	$iol->log("Polling data from ".$IOLMaster['id']);
 	if(file_exists($IOLMaster['filepath'])){
 		$iol->PollData($IOLMaster);
 	}
 	else{
-		echo $IOLMaster['id']." Unreachable\r\n";
+		$iol->log($IOLMaster['id']." Unreachable");
 		$iol->LastChecked($IOLMaster['id']);
 	}
 }
+
+$iol->log("Finished Poll");

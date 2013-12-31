@@ -29,8 +29,19 @@ class Install {
 				`id` VARCHAR(50) NOT NULL COLLATE 'utf16_bin',
 				`checksum` VARCHAR(50) NOT NULL COLLATE 'utf16_bin',
 				`record` BLOB NOT NULL,
-				`dateadded` DATE NULL DEFAULT NULL,
+				`dateadded` DATETIME NULL DEFAULT NULL,
 				PRIMARY KEY (`checksum`)
+				)
+				COLLATE='utf16_bin'
+				ENGINE=InnoDB;";
+
+		$this->db->ExecNoneQuery($sql);
+
+		$sql = "CREATE TABLE `iolpolllog` (
+				`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+				`message` TEXT NOT NULL,
+				`datecreated` DATETIME NULL DEFAULT NULL,
+				PRIMARY KEY (`id`)
 				)
 				COLLATE='utf16_bin'
 				ENGINE=InnoDB;";
@@ -43,6 +54,8 @@ class Install {
 		$sql = 'DROP TABLE IF EXISTS iolmasters';
 		$this->db->ExecNoneQuery($sql);
 		$sql = 'DROP TABLE IF EXISTS ioldata';
+		$this->db->ExecNoneQuery($sql);
+		$sql = 'DROP TABLE IF EXISTS iolpolllog';
 		$this->db->ExecNoneQuery($sql);
 	}
 }

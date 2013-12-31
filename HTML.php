@@ -103,6 +103,16 @@ class HTML {
 		echo "$neverpolled Never responded<br>";
 	}
 
+	public static function ViewPollLog()
+	{
+		$db=self::DB();
+		$iol=new IOL($db);
+		$log = $iol->GetLog();
+
+		foreach($log as $logitem){
+			echo $logitem['datecreated'].' '.$logitem['message'].'<br>';
+		}
+	}
 
 
 

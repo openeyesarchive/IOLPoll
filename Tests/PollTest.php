@@ -185,10 +185,19 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	}
 
+	public function testLogMessages()
+	{
+		$this->iol->Log('test message');
+		$this->iol->Log('test message 2');
+		$log = $this->iol->GetLog();
+		$this->AssertTrue($log[0]['message']=='test message 2');
+		$this->AssertTrue($log[1]['message']=='test message');
+	}
 
 
 
 
 
 
-}
+
+	}

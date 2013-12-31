@@ -56,6 +56,7 @@ class DataHelperMySQL {
 	public function GetValue($sql)
 	{
 		$get = $this->Get($sql);
+		if(!isset($get[0]))return null;
 		return $get[0][0];
 	}
 
