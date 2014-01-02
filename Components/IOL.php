@@ -23,12 +23,16 @@ class IOL {
 			$checksum = sha1($record);
 			$prep = $this->db->prepare("insert into ioldata (id,checksum,record,dateadded) values (:id,:checksum,:record,now())");
 			$id = $IOLMaster['id'];
-			//this will fail silently if the checksum is already in the database
 			if($prep->execute(array(":id" => $id, ":checksum" =>$checksum, ":record"=>$record))){
 				$this->log("$id-$checksum Added");
 			}
 			else{
+				if($prep->errorinfo()[1]=1062){
 				$this->log("$id-$checksum Already in database");
+				}
+				else{
+					$this->log("Unknown error: ".$prep->errorinfo()[2]);
+				}
 			}
 
 
