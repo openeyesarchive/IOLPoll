@@ -29,7 +29,8 @@ class Config
 					'password' => '',
 				),
 				'session' => array(
-					'timeout' => 86400))
+					'timeout' => 86400),
+				'api' => 'http://urltoapi/')
 		,
 			'tests' => array(
 				'db' => array(
@@ -38,7 +39,9 @@ class Config
 					'password' => '',
 				),
 				'session' => array(
-					'timeout' => 86400))
+					'timeout' => 86400),
+				'api' => 'http://urltoapi/')
+
 		);
 		return $config;
 	}
