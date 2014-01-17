@@ -47,6 +47,16 @@ class Install {
 				ENGINE=InnoDB;";
 
 		$this->db->ExecNoneQuery($sql);
+
+		$sql = "CREATE TABLE `ioldatapushlog` (
+				`checksum` VARCHAR(50) NOT NULL COLLATE 'utf16_bin',
+				`datecreated` DATETIME NULL DEFAULT NULL,
+				PRIMARY KEY (`checksum`)
+				)
+				COLLATE='utf16_bin'
+				ENGINE=InnoDB;";
+
+		$this->db->ExecNoneQuery($sql);
 	}
 
 	public function RemoveTables()
@@ -56,6 +66,8 @@ class Install {
 		$sql = 'DROP TABLE IF EXISTS ioldata';
 		$this->db->ExecNoneQuery($sql);
 		$sql = 'DROP TABLE IF EXISTS iolpolllog';
+		$this->db->ExecNoneQuery($sql);
+		$sql = 'DROP TABLE IF EXISTS ioldatapushlog';
 		$this->db->ExecNoneQuery($sql);
 	}
 }

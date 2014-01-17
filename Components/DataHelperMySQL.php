@@ -60,6 +60,13 @@ class DataHelperMySQL {
 		return $get[0][0];
 	}
 
+	public function GetSingle($sql)
+	{
+		$get = $this->Get($sql);
+		if(!isset($get[0]))return null;
+		return $get[0];
+	}
+
 	public function ExecNoneQuery($sql)
 	{
 		try {
