@@ -24,7 +24,7 @@ class PollTest extends PHPUnit_Framework_TestCase {
 		$this->install->SetUpDatabase('iolmasters_test');
 
 		$iol = new IOL($this->db);
-		$iol->Add('testiol','//IOLMaster:Iolm_XP@iolm/export/IOLMasterExportData.MDB','notes');
+		$iol->Add('testiol','\\unreachable\unreachable.mdb','notes');
 		$iol->Add('sample','IOLSample.mdb','notes');
 		$this->iol=$iol;
 	}
