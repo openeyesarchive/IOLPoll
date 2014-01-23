@@ -14,42 +14,52 @@ class IOL {
 
 	public function PollData($IOLMaster)
 	{
-		$db = new DataHelperAccess($IOLMaster['filepath'],'', 'Meditec');
-
-		$data = $db->GetSQL("select * from patientdata");
+		$data = $this->GetAccessData($IOLMaster);
 
 		foreach($data as $row){
-			$record=serialize($row);
-			$checksum = sha1($record);
-			$prep = $this->db->prepare("insert into ioldata (id,checksum,record,dateadded) values (:id,:checksum,:record,now())");
-			$id = $IOLMaster['id'];
-			if($prep->execute(array(":id" => $id, ":checksum" =>$checksum, ":record"=>$record))){
-				$this->log("$id-$checksum Added");
+			$reading=serialize($row);
+			$checksum = sha1($reading);
+			$this->SaveIolReading($IOLMaster['id'],$reading,$checksum);
+		}
+
+		$this->LogAvailableStatus($IOLMaster['id'],$data);
+	}
+
+	public function GetAccessData($IOLMaster)
+	{
+		$db = new DataHelperAccess($IOLMaster['filepath'],'', 'Meditec');
+		return $db->GetSQL("select * from patientdata");
+	}
+
+	public function SaveIolReading($id, $reading, $checksum)
+	{
+		$prep = $this->db->prepare("insert into ioldata (id,checksum,record,dateadded) values (:id,:checksum,:record,now())");
+		if($prep->execute(array(":id" => $id, ":checksum" =>$checksum, ":record"=>$reading))){
+			$this->log("$id-$checksum Added");
+		}
+		else{
+			if($prep->errorinfo()[1]=1062){
+				$this->log("$id-$checksum Already in database");
 			}
 			else{
-				if($prep->errorinfo()[1]=1062){
-				$this->log("$id-$checksum Already in database");
-				}
-				else{
-					$this->log("Unknown error: ".$prep->errorinfo()[2]);
-				}
+				$this->log("Unknown error: ".$prep->errorinfo()[2]);
 			}
-
-
 		}
-
-		$this->LastChecked($IOLMaster['id']);
-		if($data){
-			$this->LastAvailable($IOLMaster['id']);
-		}
-		else
-		{
-			$this->log("No Data Available");
-		}
-
-
-
 	}
+
+
+	public function LogAvailableStatus($id,$data_available)
+	{
+		$this->LastChecked($id);
+
+		if($data_available){
+			$this->LastAvailable($id);
+		}
+		else{
+			$this->log("No data available");
+		}
+	}
+
 
 	public function Get($id)
 	{

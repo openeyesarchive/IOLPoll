@@ -21,3 +21,8 @@ if(!$db->TableExists('iolmasters')){
 	$iol->log("Tables created. Relaunch.");
 	die();
 }
+
+$IOLMasters = $iol->ListIOLMasters();
+if(!$IOLMasters){
+	$iol->log("Nothing to do. Add IOL Masters via web control panel");
+}

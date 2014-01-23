@@ -7,5 +7,4 @@ include_once 'Config/config.php';
 include 'Setup.php';
 
 $idp=new IOLDataPusher($db,$api);
-
 $idp->PushReadingsInQueue(true);
