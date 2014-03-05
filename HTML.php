@@ -7,19 +7,19 @@ include_once 'Config/config.php';
 
 class HTML {
 
-	public static function DB()
+	public static function db()
 	{
-		$config=Config::Load();
+		$config=Config::load();
 		$con=$config['live']['db']['connectionString'];
 		$username=$config['live']['db']['username'];
 		$password=$config['live']['db']['password'];
 		return new DataHelperMySQL($con,$username,$password);
 	}
 
-	public static function ViewIOLMasters()
+	public static function viewIOLMasters()
 	{
-		$db=self::DB();
-		$masters = $db->Get("select * from iolmasters");
+		$db=self::db();
+		$masters = $db->get("select * from iolmasters");
 
 		foreach($masters as $master){
 			$isup = new DateTime("now");
@@ -40,19 +40,19 @@ class HTML {
 		}
 	}
 
-	public static function PostNewIOLMaster($post)
+	public static function postNewIOLMaster($post)
 	{
-		$db=self::DB();
+		$db=self::db();
 		$iol=new IOL($db);
-		$iol->Add($post['id'],$post['path'],$post['notes']);
+		$iol->add($post['id'],$post['path'],$post['notes']);
 		header("location: /admin/viewiolmasters.php");
 	}
 
-	public static function ViewIOLMaster($id)
+	public static function viewIOLMaster($id)
 	{
-		$db=self::DB();
+		$db=self::db();
 		$iol = new IOL($db);
-		$iolmaster=$iol->Get($id);
+		$iolmaster=$iol->get($id);
 		echo "ID:".$iolmaster["id"]."<BR>";
 		echo "Path:".$iolmaster["filepath"]."<BR>";
 		echo "Lastchecked:".$iolmaster["lastchecked"]."<BR>";
@@ -63,51 +63,51 @@ class HTML {
 
 	}
 
-	public static function GetIOLMaster($id)
+	public static function getIOLMaster($id)
 	{
-		$db=self::DB();
+		$db=self::db();
 		$iol = new IOL($db);
-		return $iol->Get($id);
+		return $iol->get($id);
 	}
 
-	public static function DeleteIOLMaster($id)
+	public static function deleteIOLMaster($id)
 	{
-		$db=self::DB();
+		$db=self::db();
 		$iol=new IOL($db);
-		$iol->Delete($id);
+		$iol->delete($id);
 		header("location: /admin/viewiolmasters.php");
 	}
 
-	public static function UpdateIOLMaster($post)
+	public static function updateIOLMaster($post)
 	{
-		$db=self::DB();
+		$db=self::db();
 		$iol=new IOL($db);
-		$iol->Update($post['id'],$post['path'],$post['notes']);
+		$iol->update($post['id'],$post['path'],$post['notes']);
 		header("location: /admin/viewiolmaster.php?id=".$post['id']);
 	}
 
-	public static function Stats()
+	public static function stats()
 	{
-		$db=self::DB();
+		$db=self::db();
 		$iol=new IOL($db);
-		$count=$iol->Count();
-		$reachable=$iol->Reachable();
-		$lastpolled=$iol->LastPolled();
-		$unreachable=$iol->Unreachable();
+		$count=$iol->count();
+		$reachable=$iol->reachable();
+		$lastpolled=$iol->lastPolled();
+		$unreachable=$iol->unreachable();
 
 		echo "$count IOL Masters in Database<br>";
 		echo "Last polled $lastpolled<br>";
 		echo "$reachable Online<br>";
-		echo "$unreachable Unreachable<br>";
+		echo "$unreachable unreachable<br>";
 		$neverpolled = $count-$reachable-$unreachable;
 		echo "$neverpolled Never responded<br>";
 	}
 
-	public static function ViewPollLog()
+	public static function viewPollLog()
 	{
-		$db=self::DB();
+		$db=self::db();
 		$iol=new IOL($db);
-		$log = $iol->GetLog();
+		$log = $iol->getLog();
 
 		foreach($log as $logitem){
 			echo $logitem['datecreated'].' '.$logitem['message'].'<br>';

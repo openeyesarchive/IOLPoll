@@ -14,25 +14,25 @@ class IOLDataPusher {
 		$this->api=$api;
 	}
 
-	public function GetAll()
+	public function getAll()
 	{
-		$pdo = $this->db->Get("select * from ioldata");
+		$pdo = $this->db->get("select * from ioldata");
 		return $pdo;
 	}
 
-	public function GetReadingsInQueue()
+	public function getReadingsInQueue()
 	{
-		$pdo = $this->db->Get("select * from ioldata where not checksum in (select checksum from ioldatapushlog)");
+		$pdo = $this->db->get("select * from ioldata where not checksum in (select checksum from ioldatapushlog)");
 		return $pdo;
 	}
 
 
-	public function PushReading($iol_reading)
+	public function pushReading($iol_reading)
 	{
-		return $this->PushJsonToApi($this->toJSON($iol_reading));
+		return $this->pushJsonToApi($this->toJSON($iol_reading));
 	}
 
-	public function PushJsonToApi($json)
+	public function pushJsonToApi($json)
 	{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->api);
@@ -43,19 +43,19 @@ class IOLDataPusher {
 		return $http_status;
 	}
 
-	public function LogSuccessfulPush($checksum)
+	public function logSuccessfulPush($checksum)
 	{
-		$this->db->ExecPrepared("insert into ioldatapushlog (checksum,datecreated) values (:checksum,now())",array(":checksum" => $checksum));
+		$this->db->execPrepared("insert into ioldatapushlog (checksum,datecreated) values (:checksum,now())",array(":checksum" => $checksum));
 	}
 
 
-	public function PushReadingsInQueue($bool_remove_successful_push_from_queue=true)
+	public function pushReadingsInQueue($bool_remove_successful_push_from_queue=true)
 	{
-		$iol_readings = $this->GetReadingsInQueue();
+		$iol_readings = $this->getReadingsInQueue();
 		foreach($iol_readings as $iol_reading){
-			$status_code=$this->PushReading($iol_reading);
+			$status_code=$this->pushReading($iol_reading);
 			if(in_array($status_code,array('201','302'))) {
-				$this->LogSuccessfulPush($iol_reading['checksum']);
+				$this->logSuccessfulPush($iol_reading['checksum']);
 			}
 		}
 

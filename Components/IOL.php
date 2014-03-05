@@ -12,48 +12,58 @@ class IOL {
 		$this->db=$db;
 	}
 
-	public function PollData($IOLMaster)
+    public function saveIolReadings($IOLMaster,$readings)
+    {
+        foreach($readings as $row){
+            $reading=serialize($row);
+            $checksum = sha1($reading);
+            $this->saveIolReading($IOLMaster['id'],$reading,$checksum);
+        }
+    }
+
+	public function importAll($IOLMaster)
 	{
-		$data = $this->GetAccessData($IOLMaster);
-
-		foreach($data as $row){
-			$reading=serialize($row);
-			$checksum = sha1($reading);
-			$this->SaveIolReading($IOLMaster['id'],$reading,$checksum);
-		}
-
-		$this->LogAvailableStatus($IOLMaster['id'],$data);
-	}
-
-	public function GetAccessData($IOLMaster)
-	{
+        if(file_exists($IOLMaster['filepath'])){
 		$db = new DataHelperAccess($IOLMaster['filepath'],'', 'Meditec');
-		return $db->GetSQL("select * from patientdata");
+		return $db->getSQL("select * from patientdata");
+        }
 	}
 
-	public function SaveIolReading($id, $reading, $checksum)
+    public function importRecent($IOLMaster)
+    {
+        if(file_exists($IOLMaster['filepath'])){
+            $db = new DataHelperAccess($IOLMaster['filepath'],'', 'Meditec');
+            $date = new DateTime($IOLMaster['lastavailable']);
+            $date->modify("-1 Day");
+            $accessStyleDate = $date->format('m-d-Y');
+            return $db->getSQL("select * from patientdata where measurement_date > #".$accessStyleDate."#");
+        }
+    }
+
+	public function saveIolReading($id, $reading, $checksum)
 	{
 		$prep = $this->db->prepare("insert into ioldata (id,checksum,record,dateadded) values (:id,:checksum,:record,now())");
 		if($prep->execute(array(":id" => $id, ":checksum" =>$checksum, ":record"=>$reading))){
 			$this->log("$id-$checksum Added");
 		}
 		else{
-			if($prep->errorinfo()[1]=1062){
+            $error = $prep->errorinfo();
+			if($error[1]=1062){
 				$this->log("$id-$checksum Already in database");
 			}
 			else{
-				$this->log("Unknown error: ".$prep->errorinfo()[2]);
+				$this->log("Unknown error: ".$error[2]);
 			}
 		}
 	}
 
 
-	public function LogAvailableStatus($id,$data_available)
+	public function logAvailableStatus($id,$data_available)
 	{
-		$this->LastChecked($id);
+		$this->lastChecked($id);
 
 		if($data_available){
-			$this->LastAvailable($id);
+			$this->lastAvailable($id);
 		}
 		else{
 			$this->log("No data available");
@@ -61,7 +71,7 @@ class IOL {
 	}
 
 
-	public function Get($id)
+	public function get($id)
 	{
 		$pdo = $this->db->Prepare("select * from iolmasters where id=:id");
 		$pdo->execute(array(':id'=>$id));
@@ -69,67 +79,67 @@ class IOL {
 		return $res;
 	}
 
-	public function Delete($id)
+	public function delete($id)
 	{
-		$pdo = $this->db->Prepare("delete from iolmasters where id=:id");
+		$pdo = $this->db->prepare("delete from iolmasters where id=:id");
 		$pdo->execute(array(':id'=>$id));
 	}
 
-	public function Count()
+	public function count()
 	{
-		return $this->db->GetValue("select count(*) from iolmasters");
+		return $this->db->getValue("select count(*) from iolmasters");
 	}
 
-	public function ListIOLMasters()
+	public function listIOLMasters()
 	{
-		$pdo = $this->db->Get("select * from iolmasters");
+		$pdo = $this->db->get("select * from iolmasters");
 		return $pdo;
 	}
 
-	public function Add($id,$filepath, $notes)
+	public function add($id,$filepath, $notes)
 	{
-		$this->db->ExecPrepared("insert into iolmasters (id,filepath,notes) values (:id,:filepath,:notes)",array(":id" => $id, ":filepath" =>$filepath,":notes" =>$notes));
+		$this->db->execPrepared("insert into iolmasters (id,filepath,notes) values (:id,:filepath,:notes)",array(":id" => $id, ":filepath" =>$filepath,":notes" =>$notes));
 	}
 
-	public function Update($id,$filepath,$notes)
+	public function update($id,$filepath,$notes)
 	{
-		$this->db->ExecPrepared("update iolmasters set filepath=:filepath, notes=:notes where id=:id",array(":id" => $id, ":filepath" =>$filepath,":notes" =>$notes));
+		$this->db->execPrepared("update iolmasters set filepath=:filepath, notes=:notes where id=:id",array(":id" => $id, ":filepath" =>$filepath,":notes" =>$notes));
 	}
 
-	public function LastChecked($id)
+	public function lastChecked($id)
 	{
-		$this->db->ExecPrepared ("update iolmasters set lastchecked=now() where id=:id",array(":id" => $id));
+		$this->db->execPrepared ("update iolmasters set lastchecked=now() where id=:id",array(":id" => $id));
 	}
 
-	public function LastAvailable($id)
+	public function lastAvailable($id)
 	{
-		$this->db->ExecPrepared ("update iolmasters set lastavailable=now() where id=:id",array(":id" => $id));
+		$this->db->execPrepared ("update iolmasters set lastavailable=now() where id=:id",array(":id" => $id));
 	}
 
-	public function LastPolled()
+	public function lastPolled()
 	{
-		return $this->db->GetValue ("select lastchecked from iolmasters order by lastchecked desc limit 0,1");
+		return $this->db->getValue ("select lastchecked from iolmasters order by lastchecked desc limit 0,1");
 	}
 
-	public function Reachable()
+	public function reachable()
 	{
-		return $this->db->GetValue ("select count(*) from iolmasters where lastavailable >= lastchecked limit 0,1");
+		return $this->db->getValue ("select count(*) from iolmasters where lastavailable >= lastchecked limit 0,1");
 	}
 
-	public function Unreachable()
+	public function unreachable()
 	{
-		return $this->db->GetValue ("select count(*) from iolmasters where lastavailable <= Date_Add(lastchecked,interval -720 minute) limit 0,1");
+		return $this->db->getValue ("select count(*) from iolmasters where lastavailable <= Date_Add(lastchecked,interval -720 minute) limit 0,1");
 	}
 
-	public function Log($message)
+	public function log($message)
 	{
-		$this->db->ExecPrepared("insert into iolpolllog (message,datecreated) values (:message,now())",array(":message" => $message));
+		$this->db->execPrepared("insert into iolpolllog (message,datecreated) values (:message,now())",array(":message" => $message));
 		echo "\r\n$message\r\n";
 	}
 
-	public function GetLog()
+	public function getLog()
 	{
-		$pdo = $this->db->Get("select * from iolpolllog order by id desc");
+		$pdo = $this->db->get("select * from iolpolllog order by id desc");
 		return $pdo;
 	}
 

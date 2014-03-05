@@ -5,6 +5,8 @@ include_once '../components/Install.php';
 include_once '../Components/IOL.php';
 include_once '../Config/config.php';
 
+// cmdkey /add:iolm /user:IOLMaster /pass:Iolm_XP
+
 class PollTest extends PHPUnit_Framework_TestCase {
 	private $db;
 	private $install;
@@ -24,8 +26,8 @@ class PollTest extends PHPUnit_Framework_TestCase {
 		$this->install->SetUpDatabase('iolmasters_test');
 
 		$iol = new IOL($this->db);
-		$iol->Add('testiol','\\unreachable\unreachable.mdb','notes');
-		$iol->Add('sample','IOLSample.mdb','notes');
+		$iol->add('testiol','\\unreachable\unreachable.mdb','notes');
+		$iol->add('sample','IOLSample.mdb','notes');
 		$this->iol=$iol;
 	}
 
@@ -37,93 +39,92 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	public function testGetIOLMaster()
 	{
-		$iolmaster = $this->iol->Get('sample');
-		$this->AssertTrue($iolmaster['filepath']=='IOLSample.mdb');
+		$iolmaster = $this->iol->get('sample');
+		$this->assertTrue($iolmaster['filepath']=='IOLSample.mdb');
 	}
 
 	public function testDeleteIOLMaster()
 	{
-
-		$this->iol->Add('delme','test','notes');
+		$this->iol->add('delme','test','notes');
 		$this->iol->Delete('delme');
-		$iolmaster = $this->iol->Get('delme');
-		$this->AssertFalse($iolmaster);
+		$iolmaster = $this->iol->get('delme');
+		$this->assertFalse($iolmaster);
 	}
 
 	public function testUpdateIOLMaster()
 	{
-		$this->iol->Add('update','test','notes');
-		$this->iol->Update('update','newvalue','newnotes');
-		$iolmaster = $this->iol->Get('update');
-		$this->AssertTrue($iolmaster['filepath']=='newvalue');
-		$this->AssertTrue($iolmaster['notes']=='newnotes');
+		$this->iol->add('update','test','notes');
+		$this->iol->update('update','newvalue','newnotes');
+		$iolmaster = $this->iol->get('update');
+		$this->assertTrue($iolmaster['filepath']=='newvalue');
+		$this->assertTrue($iolmaster['notes']=='newnotes');
 	}
 
 
-	public function testCheckPermissionsShouldFail()
+	public function testcheckPermissionsShouldFail()
 	{
-		$permissions=DataHelperMySQL::CheckPermissions('mysql:host=localhost;dbname=doesntexist','withexception','orinvalidpassword');
-		$this->AssertFalse($permissions);
+		$permissions=DataHelperMySQL::checkPermissions('mysql:host=localhost;dbname=doesntexist','withexception','orinvalidpassword');
+		$this->assertFalse($permissions);
 	}
 
-	public function testCheckPermissionsShouldSucceed()
+	public function testcheckPermissionsShouldSucceed()
 	{
-		$permissions=DataHelperMySQL::CheckPermissions($this->config['tests']['db']['connectionString'],$this->config['tests']['db']['username'],$this->config['tests']['db']['password']);
-		$this->AssertTrue($permissions);
+		$permissions=DataHelperMySQL::checkPermissions($this->config['tests']['db']['connectionString'],$this->config['tests']['db']['username'],$this->config['tests']['db']['password']);
+		$this->assertTrue($permissions);
 	}
 
 	public function testCheckInstalledShouldFail()
 	{
-		$table = $this->db->TableExists('fail');
-		$this->AssertFalse($table);
+		$table = $this->db->tableExists('fail');
+		$this->assertFalse($table);
 	}
 
 	public function testCheckInstalledShouldSucceed()
 	{
-		$table = $this->db->TableExists('iolmasters');
-		$this->AssertTrue($table);
+		$table = $this->db->tableExists('iolmasters');
+		$this->assertTrue($table);
 	}
 
 	public function testListIOLMasters()
 	{
-		$IOLMasters = $this->iol->ListIOLMasters();
-		$this->AssertTrue(is_array($IOLMasters));
-		$this->AssertTrue(count($IOLMasters) > 0);
+		$IOLMasters = $this->iol->listIOLMasters();
+		$this->assertTrue(is_array($IOLMasters));
+		$this->assertTrue(count($IOLMasters) > 0);
 	}
 
-	public function testStatsGetIOLCount(){
-		$this->AssertTrue($this->iol->Count() == 2);
+	public function testStatsGetIOLcount(){
+		$this->assertTrue($this->iol->count() == 2);
 	}
 
-	public function testStatsGetReachable(){
+	public function testStatsGetreachable(){
 		$this->iol->LastChecked('sample');
 		$this->iol->LastAvailable('sample');
-		$reachable=$this->iol->Reachable();
-		$this->AssertTrue($reachable == 1);
+		$reachable=$this->iol->reachable();
+		$this->assertTrue($reachable == 1);
 	}
 
-	public function testStatsUnReachable(){
+	public function testStatsUnreachable(){
 		$this->iol->LastChecked('sample');
 		$this->db->ExecNoneQuery("update iolmasters set lastavailable=DATE_SUB(NOW(), INTERVAL 720 MINUTE) where id='sample'");
-		$unreachable=$this->iol->Unreachable();
-		$this->AssertTrue($unreachable == 1);
+		$unreachable=$this->iol->unreachable();
+		$this->assertTrue($unreachable == 1);
 	}
 
-	public function testStatsLastPolled(){
+	public function testStatslastPolled(){
 		$start = new DateTime();
 		$this->iol->LastChecked('sample');
-		$lastpolled = new DateTime($this->iol->LastPolled());
-		$this->AssertTrue($start <= $lastpolled);
+		$lastpolled = new DateTime($this->iol->lastPolled());
+		$this->assertTrue($start <= $lastpolled);
 	}
 
 	public function testDBListIOLMasters(){
-		$pdo = $this->db->Get("select * from iolmasters");
-		$this->AssertTrue(count($pdo) > 0);
+		$pdo = $this->db->get("select * from iolmasters");
+		$this->assertTrue(count($pdo) > 0);
 	}
 
-	public function testPollShouldBeUnreachableIOLMasters()
+	public function testPollShouldBeunreachableIOLMasters()
 	{
-		$IOLMasters =$this->iol->ListIOLMasters();
+		$IOLMasters =$this->iol->listIOLMasters();
 
 		$reachable=true;
 		foreach($IOLMasters as $IOLMaster){
@@ -131,12 +132,12 @@ class PollTest extends PHPUnit_Framework_TestCase {
 				$reachable=false;
 			}
 		}
-		$this->AssertFalse($reachable);
+		$this->assertFalse($reachable);
 	}
 
-	public function testPollShouldBeSomeReachableIOLMasters()
+	public function testPollShouldBeSomereachableIOLMasters()
 	{
-		$IOLMasters =$this->iol->ListIOLMasters();
+		$IOLMasters =$this->iol->listIOLMasters();
 
 		$reachable=false;
 		foreach($IOLMasters as $IOLMaster)
@@ -145,52 +146,61 @@ class PollTest extends PHPUnit_Framework_TestCase {
 				$reachable=true;
 			}
 		}
-		$this->AssertTrue($reachable);
+		$this->assertTrue($reachable);
 	}
 
-	public function testSampleDB()
+	public function testSampledb()
 	{
 		$db = new DataHelperAccess('IOLSample.mdb','', 'Meditec');
-		$data = $db->GetSQL("select * from patientdata");
-		$this->AssertTrue(count($data) > 0);
+		$data = $db->getSQL("select * from patientdata");
+		$this->assertTrue(count($data) > 0);
 	}
 
 	public function testPullDataFromReachableIOLMaster()
 	{
-		$IOLMasters =$this->iol->ListIOLMasters();
+		$IOLMasters =$this->iol->listIOLMasters();
 
-		foreach($IOLMasters as $IOLMaster)
-		{
-			if(file_exists($IOLMaster['filepath'])){
-				$this->iol->PollData($IOLMaster);
-			}
-			else
-			{
-				$this->iol->LastChecked($IOLMaster['id']);
-			}
-		}
+        foreach($IOLMasters as $IOLMaster)
+        {
+            $readings = $this->iol->importAll($IOLMaster);
+            if(isset($readings)){
+                $this->iol->saveIOLReadings($IOLMaster,$readings);
+            }
+            $this->iol->logAvailableStatus($IOLMaster['id'],isset($readings));
+        }
 
-		$data=$this->db->Get("select * from ioldata");
-		$this->AssertTrue(count($data) > 0);
+		$data=$this->db->get("select * from ioldata");
+		$this->assertTrue(count($data) > 0);
 
-		$data=$this->db->Get("select * from iolmasters where lastavailable is not null");
-		$this->AssertTrue(count($data) > 0);
+		$data=$this->db->get("select * from iolmasters where lastavailable is not null");
+		$this->assertTrue(count($data) > 0);
 
-		$data=$this->db->Get("select * from iolmasters where lastavailable is null");
-		$this->AssertTrue(count($data) > 0);
+		$data=$this->db->get("select * from iolmasters where lastavailable is null");
+		$this->assertTrue(count($data) > 0);
 
-		$data=$this->db->Get("select * from iolmasters where lastchecked is not null");
-		$this->AssertTrue(count($data)==2);
+		$data=$this->db->get("select * from iolmasters where lastchecked is not null");
+		$this->assertTrue(count($data)==2);
 
 	}
 
+
+    public function testPollDataSinceLastAvailable()
+    {
+        $IOLMaster =$this->iol->get('sample');
+        $IOLMaster['lastavailable']='2013-01-14 00:00:00';
+        $readings = $this->iol->importRecent($IOLMaster);
+        $this->assertTrue(count($readings)==304);
+    }
+
+
+
 	public function testLogMessages()
 	{
-		$this->iol->Log('test message');
-		$this->iol->Log('test message 2');
+		$this->iol->log('test message');
+		$this->iol->log('test message 2');
 		$log = $this->iol->GetLog();
-		$this->AssertTrue($log[0]['message']=='test message 2');
-		$this->AssertTrue($log[1]['message']=='test message');
+		$this->assertTrue($log[0]['message']=='test message 2');
+		$this->assertTrue($log[1]['message']=='test message');
 	}
 
 

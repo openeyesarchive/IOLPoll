@@ -2,7 +2,7 @@
 <?php include_once 'header.php';?>
 <?php
 if( isset($_POST['id']) &&  isset($_POST['path']) ){
-	HTML::PostNewIOLMaster($_POST);
+	HTML::postNewIOLMaster($_POST);
 }
 ?>
 <h1>Add IOL Master</h1>

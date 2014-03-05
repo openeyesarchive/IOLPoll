@@ -5,11 +5,11 @@
 
 <?php
 if( isset($_POST['id']) &&  isset($_POST['path']) ){
-	HTML::UpdateIOLMaster($_POST);
+	HTML::updateIOLMaster($_POST);
 }
 ?>
 
-<?php $iol=HTML::GetIOLMaster($_GET["id"])?>
+<?php $iol=HTML::getIOLMaster($_GET["id"])?>
 
 <form method="POST" action="editiolmaster.php">
 	ID: <input type="text" name="id" value="<?=$iol["id"]?>"><br>

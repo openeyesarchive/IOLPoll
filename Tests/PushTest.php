@@ -30,11 +30,11 @@ class PushTest extends PHPUnit_Framework_TestCase {
 		$this->install->SetUpDatabase('iolmasters_pushtest');
 
 		$iol = new IOL($this->db);
-		$iol->Add('sample','IOLSample.mdb','notes');
+		$iol->add('sample','IOLSample.mdb','notes');
 		$this->iol=$iol;
 
 
-		$IOLMaster = $iol->Get('sample');
+		$IOLMaster = $iol->get('sample');
 		$iol->PollData($IOLMaster);
 	}
 
@@ -42,20 +42,20 @@ class PushTest extends PHPUnit_Framework_TestCase {
 	{
 		$iol_readings = new IOLReading($this->db);
 		$readings = $iol_readings->GetAll();
-		$this->AssertTrue(count($readings)>0);
+		$this->assertTrue(count($readings)>0);
 	}
 
 	public function testPushFailMalformedJSON()
 	{
 		$http_status = $this->idp->PushJsonToAPI('x');
-		$this->AssertTrue($http_status==400);
+		$this->assertTrue($http_status==400);
 	}
 
 	public function testLogSuccessfulPush()
 	{
-		$this->idp->LogSuccessfulPush('checksumtest');
+		$this->idp->logSuccessfulPush('checksumtest');
 		$record_exists = $this->db->GetValue("select * from ioldatapushlog where checksum='checksumtest'");
-		$this->AssertTrue($record_exists=='checksumtest');
+		$this->assertTrue($record_exists=='checksumtest');
 	}
 
 	public function testPushAndLogReadingToAPI()
@@ -63,8 +63,8 @@ class PushTest extends PHPUnit_Framework_TestCase {
 		$iol_readings = $this->idp->GetReadingsInQueue();
 		$queue_count = count($iol_readings);
 		$this->idp->PushReading($iol_readings[0]);
-		$this->idp->LogSuccessfulPush($iol_readings[0]['checksum']);
-		$this->AssertTrue(count($this->idp->GetReadingsInQueue())==$queue_count-1);
+		$this->idp->logSuccessfulPush($iol_readings[0]['checksum']);
+		$this->assertTrue(count($this->idp->GetReadingsInQueue())==$queue_count-1);
 	}
 
 	public function testPushAllReadingsToAPI()
@@ -72,20 +72,20 @@ class PushTest extends PHPUnit_Framework_TestCase {
 		$iol_readings = $this->idp->GetAll();
 		foreach($iol_readings as $iol_reading){
 			$http_status = $this->idp->PushReading($iol_reading);
-			$this->AssertTrue($http_status==201 || $http_status==302);
+			$this->assertTrue($http_status==201 || $http_status==302);
 		}
 	}
 
 	public function testPushAllReadingsInQueue()
 	{
 		$this->idp->PushReadingsInQueue(true);
-		$this->AssertTrue(count($this->idp->GetReadingsInQueue())==0);
+		$this->assertTrue(count($this->idp->GetReadingsInQueue())==0);
 	}
 
 	public function testGetReadingsToPush()
 	{
 		$iol_readings_to_push = $this->idp->GetReadingsInQueue();
-		$this->AssertTrue(count($iol_readings_to_push)>0);
+		$this->assertTrue(count($iol_readings_to_push)>0);
 	}
 
 	protected function tearDown()

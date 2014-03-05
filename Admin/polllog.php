@@ -3,5 +3,5 @@
 
 <h1>Poll Log</h1>
 
-<?=HTML::ViewPollLog()?>
+<?=HTML::viewPollLog()?>
 <?php include_once 'footer.php';?>

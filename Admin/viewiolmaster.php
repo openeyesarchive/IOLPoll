@@ -3,5 +3,5 @@
 
 <h1>View IOL Master</h1>
 
-<?=HTML::ViewIOLMaster($_GET["id"])?>
+<?=HTML::viewIOLMaster($_GET["id"])?>
 <?php include_once 'footer.php';?>

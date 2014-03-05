@@ -5,10 +5,10 @@
 
 <?php
 if( isset($_POST['id']) ){
-	HTML::DeleteIOLMaster($_POST['id']);
+	HTML::deleteIOLMaster($_POST['id']);
 }
 ?>
-<?php $iol=HTML::GetIOLMaster($_GET["id"])?>
+<?php $iol=HTML::getIOLMaster($_GET["id"])?>
 
 <form method="POST" action="deleteiolmaster.php">
 	<input type="checkbox" name="id" value="<?=$iol['id']?>">Confirm delete IOL Master (<?=$iol['id']?>)<br>

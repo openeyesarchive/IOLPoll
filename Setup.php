@@ -7,7 +7,7 @@ $password=$config['live']['db']['password'];
 
 $api = $config['live']['api'];
 
-if(!DataHelperMySQL::CheckPermissions($con,$username,$password)){
+if(!DataHelperMySQL::checkPermissions($con,$username,$password)){
 	die("\r\nDatabase not ready. Check config.\r\n");
 }
 

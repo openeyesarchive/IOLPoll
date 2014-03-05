@@ -20,7 +20,7 @@ class DataHelperMySQL {
 
 	}
 
-	public function Prepare($sql)
+	public function prepare($sql)
 	{
 		try {
 			if(!$prep = $this->db->prepare($sql)){
@@ -35,7 +35,7 @@ class DataHelperMySQL {
 		return $prep;
 	}
 
-	public function Get($sql)
+	public function get($sql)
 	{
 		try {
 			if(!$query = $this->db->query($sql)){
@@ -53,21 +53,21 @@ class DataHelperMySQL {
 		return $query->fetchAll();
 	}
 
-	public function GetValue($sql)
+	public function getValue($sql)
 	{
-		$get = $this->Get($sql);
+		$get = $this->get($sql);
 		if(!isset($get[0]))return null;
 		return $get[0][0];
 	}
 
-	public function GetSingle($sql)
+	public function getSingle($sql)
 	{
-		$get = $this->Get($sql);
+		$get = $this->get($sql);
 		if(!isset($get[0]))return null;
 		return $get[0];
 	}
 
-	public function ExecNoneQuery($sql)
+	public function execNoneQuery($sql)
 	{
 		try {
 			if(!$query = $this->db->query($sql)){
@@ -85,7 +85,7 @@ class DataHelperMySQL {
 		return $query->execute();
 	}
 
-	public function ExecPrepared($sql,$values)
+	public function execPrepared($sql,$values)
 	{
 		try {
 			$prep = $this->db->prepare($sql);
@@ -104,7 +104,7 @@ class DataHelperMySQL {
 		return $return;
 	}
 
-	public static function CheckPermissions($con,$username,$password)
+	public static function checkPermissions($con,$username,$password)
 	{
 		try {
 			$db = new PDO($con, $username, $password);
@@ -115,10 +115,10 @@ class DataHelperMySQL {
 		return true;
 	}
 
-	public function TableExists($table)
+	public function tableExists($table)
 	{
 		$results = $this->db->query("SHOW TABLES LIKE '$table'");
-		if($results->rowCount()>0) return true;
+		if($results->rowcount()>0) return true;
 		return false;
 	}
 }
