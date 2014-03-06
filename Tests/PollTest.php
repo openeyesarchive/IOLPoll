@@ -183,6 +183,26 @@ class PollTest extends PHPUnit_Framework_TestCase {
 
 	}
 
+    public function testLogUpTime()
+    {
+        $start = date('Y-m-d H:i:s');
+
+        $this->iol->logUptime('sample',true);
+        sleep(1);
+        $this->iol->logUptime('sample',true);
+        sleep(1);
+        $this->iol->logUptime('sample',false);
+
+        $stats = $this->iol->uptimeStats('sample',$start,date('Y-m-d H:i:s'));
+
+        $this->assertTrue($stats[0]['available']==true);
+        $this->assertTrue($stats[1]['available']==true);
+        $this->assertTrue($stats[2]['available']==false);
+
+
+    }
+
+
 
     public function testPollDataSinceLastAvailable()
     {

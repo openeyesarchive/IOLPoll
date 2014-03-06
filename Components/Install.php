@@ -25,6 +25,16 @@ class Install {
 
 		$this->db->ExecNoneQuery($sql);
 
+        $sql = "CREATE TABLE `ioluptime` (
+				`id` VARCHAR(50) NOT NULL,
+				`checked` DATETIME NULL,
+				`available` BIT NULL
+				)
+				COLLATE='utf16_bin'
+				ENGINE=InnoDB;";
+
+        $this->db->ExecNoneQuery($sql);
+
 		$sql = "CREATE TABLE `ioldata` (
 				`id` VARCHAR(50) NOT NULL COLLATE 'utf16_bin',
 				`checksum` VARCHAR(50) NOT NULL COLLATE 'utf16_bin',
@@ -69,6 +79,8 @@ class Install {
 		$this->db->ExecNoneQuery($sql);
 		$sql = 'DROP TABLE IF EXISTS ioldatapushlog';
 		$this->db->ExecNoneQuery($sql);
+        $sql = 'DROP TABLE IF EXISTS ioluptime';
+        $this->db->ExecNoneQuery($sql);
 	}
 }
 

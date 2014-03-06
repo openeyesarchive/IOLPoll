@@ -60,6 +60,8 @@ class IOL {
 
 	public function logAvailableStatus($id,$data_available)
 	{
+
+        $this->logUptime($id,$data_available);
 		$this->lastChecked($id);
 
 		if($data_available){
@@ -70,6 +72,18 @@ class IOL {
 		}
 	}
 
+    public function logUptime($id,$available)
+    {
+        $this->db->execPrepared("insert into ioluptime (id,checked,available) values (:id,:checked,:available)",array(":id" => $id, ":checked" => date('Y-m-d H:i:s'),":available" =>$available));
+    }
+
+    public function uptimeStats($id,$startDate,$endDate)
+    {
+        $pdo = $this->db->Prepare("select * from ioluptime where id=:id and checked >= :startDate and checked <= :endDate order by checked");
+        $pdo->execute(array(':id'=>$id,':startDate'=>$startDate,':endDate'=>$endDate));
+        $res=$pdo->fetchAll();
+        return $res;
+    }
 
 	public function get($id)
 	{

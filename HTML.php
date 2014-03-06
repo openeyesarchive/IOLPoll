@@ -56,12 +56,33 @@ class HTML {
 		echo "ID:".$iolmaster["id"]."<BR>";
 		echo "Path:".$iolmaster["filepath"]."<BR>";
 		echo "Lastchecked:".$iolmaster["lastchecked"]."<BR>";
-		echo "Lastavailable:".$iolmaster["lastavailable"]."<BR><BR>";
+		echo "Lastavailable:".$iolmaster["lastavailable"]." <a href='/admin/uptimestats.php?id=".$iolmaster['id']."'>Uptime Stats</a><BR><BR>";
 		echo "Notes:".$iolmaster["notes"]."<BR><BR>";
 		echo "<a href='/admin/editiolmaster.php?id=".$iolmaster['id']."'>Edit</a> ";
 		echo "<a href='/admin/deleteiolmaster.php?id=".$iolmaster['id']."'>Delete</a><BR>";
 
 	}
+
+    public static function uptimeStats($id)
+    {
+        $db=self::db();
+        $iol = new IOL($db);
+        $startDate = new DateTime();
+        $startDate->modify("-30 Day");
+        $stats=$iol->uptimeStats($id,$startDate->format('Y-m-d H:i:s'),date('Y-m-d H:i:s'));
+        $stats = array_reverse($stats);
+
+        foreach($stats as $stat) {
+            if($stat['available']) {
+                echo '<img src="/img/available.png"> ';
+            }
+            else {
+                echo '<img src="/img/offline.png"> ';
+            }
+            echo $stat["checked"]."<BR>";
+        }
+
+    }
 
 	public static function getIOLMaster($id)
 	{
