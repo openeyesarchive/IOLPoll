@@ -20,7 +20,7 @@ class Install {
 				`lastchecked` DATETIME NULL,
 				`lastavailable` DATETIME NULL
 				)
-				COLLATE='utf16_bin'
+				COLLATE='utf8_bin'
 				ENGINE=InnoDB;";
 
 		$this->db->ExecNoneQuery($sql);
@@ -30,7 +30,7 @@ class Install {
 				`checked` DATETIME NULL,
 				`available` BIT NULL
 				)
-				COLLATE='utf16_bin'
+				COLLATE='utf8_bin'
 				ENGINE=InnoDB;";
 
         $this->db->ExecNoneQuery($sql);
@@ -42,7 +42,7 @@ class Install {
 				`dateadded` DATETIME NULL DEFAULT NULL,
 				PRIMARY KEY (`checksum`)
 				)
-				COLLATE='utf16_bin'
+				COLLATE='utf8_bin'
 				ENGINE=InnoDB;";
 
 		$this->db->ExecNoneQuery($sql);
@@ -53,7 +53,7 @@ class Install {
 				`datecreated` DATETIME NULL DEFAULT NULL,
 				PRIMARY KEY (`id`)
 				)
-				COLLATE='utf16_bin'
+				COLLATE='utf8_bin'
 				ENGINE=InnoDB;";
 
 		$this->db->ExecNoneQuery($sql);
@@ -63,7 +63,7 @@ class Install {
 				`datecreated` DATETIME NULL DEFAULT NULL,
 				PRIMARY KEY (`checksum`)
 				)
-				COLLATE='utf16_bin'
+				COLLATE='utf8_bin'
 				ENGINE=InnoDB;";
 
 		$this->db->ExecNoneQuery($sql);
