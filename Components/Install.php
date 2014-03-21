@@ -28,7 +28,7 @@ class Install {
         $sql = "CREATE TABLE `ioluptime` (
 				`id` VARCHAR(50) NOT NULL,
 				`checked` DATETIME NULL,
-				`available` BIT NULL
+				`isavailable` TINYINT(1) NULL
 				)
 				COLLATE='utf8_bin'
 				ENGINE=InnoDB;";

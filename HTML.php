@@ -73,7 +73,7 @@ class HTML {
         $stats = array_reverse($stats);
 
         foreach($stats as $stat) {
-            if($stat['available']) {
+            if($stat['isavailable']) {
                 echo '<img src="/img/available.png"> ';
             }
             else {

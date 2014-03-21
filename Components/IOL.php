@@ -74,7 +74,7 @@ class IOL {
 
     public function logUptime($id,$available)
     {
-        $this->db->execPrepared("insert into ioluptime (id,checked,available) values (:id,:checked,:available)",array(":id" => $id, ":checked" => date('Y-m-d H:i:s'),":available" =>$available));
+        $this->db->execPrepared("insert into ioluptime (id,checked,isavailable) values (:id,:checked,:isavailable)",array(":id" => $id, ":checked" => date('Y-m-d H:i:s'),":isavailable" =>$available));
     }
 
     public function uptimeStats($id,$startDate,$endDate)
