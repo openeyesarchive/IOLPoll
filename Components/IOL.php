@@ -74,6 +74,7 @@ class IOL {
 
     public function logUptime($id,$available)
     {
+        if(!$available) $available = 0;
         $this->db->execPrepared("insert into ioluptime (id,checked,isavailable) values (:id,:checked,:isavailable)",array(":id" => $id, ":checked" => date('Y-m-d H:i:s'),":isavailable" =>$available));
     }
 

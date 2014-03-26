@@ -8,7 +8,7 @@ class IOLDataPusher {
 	private $db;
 	private $api;
 
-	public function __construct($db,$api)
+	public function __construct($db,$api=null)
 	{
 		$this->db=$db;
 		$this->api=$api;
@@ -35,12 +35,16 @@ class IOLDataPusher {
 	public function pushJsonToApi($json)
 	{
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->api);
+		curl_setopt($ch, CURLOPT_URL, $this->api.'/api/MeasurementIOLMaster/');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($ch, CURLOPT_FAILONERROR, false);
+        curl_setopt($ch, CURLOPT_HTTP200ALIASES, (array)400);
+        curl_setopt($ch,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
 
 		$response = curl_exec($ch);
+        var_dump($response);
 		$http_status = curl_getinfo($ch , CURLINFO_HTTP_CODE);
-		return $http_status;
+		return array('status'=>$http_status,'response'=>$response);
 	}
 
 	public function logSuccessfulPush($checksum)
@@ -67,6 +71,8 @@ class IOLDataPusher {
 		$record= unserialize ($reading['record']);
 		$record['iol_machine_id']=$reading['id'];
 		$record['iol_poll_id']=$reading['checksum'];
+        $record['resourceType']='MeasurementIOLMaster';
+        var_dump(json_encode($record));
 		return json_encode($record);
 	}
 

@@ -26,8 +26,8 @@ class PushTest extends PHPUnit_Framework_TestCase {
 
 		$install = new Install($this->db);
 		$this->install = $install;
-		$this->install->RemoveTables('iolmasters_pushtest');
-		$this->install->SetUpDatabase('iolmasters_pushtest');
+		$this->install->RemoveTables('iolmasters_test');
+		$this->install->SetUpDatabase('iolmasters_test');
 
 		$iol = new IOL($this->db);
 		$iol->add('sample','IOLSample.mdb','notes');
@@ -35,12 +35,13 @@ class PushTest extends PHPUnit_Framework_TestCase {
 
 
 		$IOLMaster = $iol->get('sample');
-		$iol->PollData($IOLMaster);
+		$readings = $iol->importall($IOLMaster);
+        $this->iol->saveIOLReadings($IOLMaster,$readings);
 	}
 
 	public function  testGetIOLReadings()
 	{
-		$iol_readings = new IOLReading($this->db);
+		$iol_readings = new IOLDataPusher($this->db);
 		$readings = $iol_readings->GetAll();
 		$this->assertTrue(count($readings)>0);
 	}
@@ -50,6 +51,19 @@ class PushTest extends PHPUnit_Framework_TestCase {
 		$http_status = $this->idp->PushJsonToAPI('x');
 		$this->assertTrue($http_status==400);
 	}
+
+    public function testPushCorrectJSON()
+    {
+
+        $iolReadings = $this->idp->getAll();
+        $iolReading = $iolReadings[0];
+        $json = $this->idp->toJson($iolReading);
+
+        $response = $this->idp->PushJsonToAPI($json);
+        $http_status = $response['status'];
+
+        $this->assertTrue($http_status==201);
+    }
 
 	public function testLogSuccessfulPush()
 	{
